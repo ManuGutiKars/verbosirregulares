@@ -119,6 +119,7 @@ const priorityVerbs = [
 let currentVerb = {};
 let score = 0;
 let errors = 0;
+let remainingVerbs = []; // Lista de verbos que quedan por responder
 
 const versionElem = document.getElementById("version");
 const infinitiveElem = document.getElementById("infinitive");
@@ -129,15 +130,27 @@ const scoreElem = document.getElementById("score");
 const errorsElem = document.getElementById("errors");
 const checkAnswerBtn = document.getElementById("checkAnswer");
 const nextVerbBtn = document.getElementById("nextVerb");
+const restartBtn = document.getElementById("restart");
 
 let currentVerbsList = allVerbs; // Lista de verbos en uso (todos o de alta prioridad)
 
+// Función para obtener un verbo aleatorio
 function getRandomVerb() {
-    const randomIndex = Math.floor(Math.random() * currentVerbsList.length);
-    return currentVerbsList[randomIndex];
+    const randomIndex = Math.floor(Math.random() * remainingVerbs.length);
+    return remainingVerbs.splice(randomIndex, 1)[0]; // Extraer y eliminar el verbo de la lista
 }
 
+// Función para mostrar un nuevo verbo
 function displayVerb() {
+    if (remainingVerbs.length === 0) {
+        // Si ya no hay verbos disponibles, mostrar el botón de reiniciar
+        feedbackElem.textContent = "¡Has completado todos los verbos!";
+        checkAnswerBtn.disabled = true;
+        nextVerbBtn.disabled = true;
+        restartBtn.style.display = "block";
+        return;
+    }
+
     currentVerb = getRandomVerb();
     infinitiveElem.textContent = currentVerb.infinitive;
     pastElem.value = "";
@@ -147,39 +160,53 @@ function displayVerb() {
     nextVerbBtn.disabled = true;
 }
 
+// Función para comprobar la respuesta
 function checkAnswer() {
     const userPast = pastElem.value.toLowerCase().trim();
     const userParticiple = participleElem.value.toLowerCase().trim();
     
-    // Comparación de respuestas
     if (userPast === currentVerb.past.toLowerCase() && userParticiple === currentVerb.participle.toLowerCase()) {
         feedbackElem.textContent = "¡Correcto!";
         score++;
     } else {
-        // Mostrar la respuesta correcta cuando haya un error
         feedbackElem.textContent = `Incorrecto. La respuesta correcta es: Pasado - "${currentVerb.past}", Participio - "${currentVerb.participle}".`;
         errors++;
     }
 
-    // Actualización de los contadores
     scoreElem.textContent = `Aciertos: ${score}`;
     errorsElem.textContent = `Fallos: ${errors}`;
-
-    // Deshabilitar el botón de comprobar y habilitar el de siguiente verbo
     checkAnswerBtn.disabled = true;
     nextVerbBtn.disabled = false;
 }
 
+// Función para iniciar el juego con la lista seleccionada
+function startGame() {
+    score = 0;
+    errors = 0;
+    scoreElem.textContent = `Aciertos: ${score}`;
+    errorsElem.textContent = `Fallos: ${errors}`;
+    
+    remainingVerbs = [...currentVerbsList]; // Copiar la lista de verbos seleccionada
+    restartBtn.style.display = "none"; // Ocultar el botón de reiniciar
+    displayVerb();
+}
+
+// Evento para cambiar entre la versión de alta prioridad y todos los verbos
 versionElem.addEventListener("change", function() {
     if (versionElem.value === "priority") {
         currentVerbsList = priorityVerbs;
     } else {
         currentVerbsList = allVerbs;
     }
-    displayVerb();
+    startGame(); // Reiniciar el juego cuando se cambie la lista de verbos
 });
 
+// Eventos para los botones de comprobar respuesta y mostrar el siguiente verbo
 checkAnswerBtn.addEventListener("click", checkAnswer);
 nextVerbBtn.addEventListener("click", displayVerb);
 
-displayVerb();
+// Evento para reiniciar el juego
+restartBtn.addEventListener("click", startGame);
+
+// Iniciar el juego la primera vez
+startGame();
