@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verbos Irregulares</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Verbos Irregulares</h1>
+        
+        <div id="game">
+            <label for="version">Elige la versión del juego:</label>
+            <select id="version">
+                <option value="all">Todos los verbos</option>
+                <option value="priority">Alta prioridad</option>
+            </select>
+
+            <p>Verbo en infinitivo: <span id="infinitive"></span></p>
+            <label for="past">Pasado Simple:</label>
+            <input type="text" id="past" placeholder="Escribe el pasado simple">
+            <label for="participle">Participio:</label>
+            <input type="text" id="participle" placeholder="Escribe el participio">
+            <button id="checkAnswer">Comprobar</button>
+            <p id="feedback"></p>
+
+            <p id="score">Aciertos: 0</p>
+            <p id="errors">Fallos: 0</p>
+
+            <button id="nextVerb">Siguiente Verbo</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
